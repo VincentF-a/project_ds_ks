@@ -7,7 +7,7 @@ from data_process import data_process as dp
 st.sidebar.title('Welcome to our project')
 
 st.sidebar.markdown('This project is aimed at displaying the **demographic evolution** inside South Korea and predict its future evolutions.')
-st.sidebar.multiselect('Select the cities',dp.list_cities,default=dp.list_cities)
+st.sidebar.multiselect('Select the cities and provinces',dp.list_cities,default=dp.list_cities)
 
 start_year_col, end_year_col = st.sidebar.columns(2)
 with start_year_col:
@@ -18,3 +18,6 @@ with end_year_col:
 
 if st.sidebar.button('Visualize the results'):
     st.markdown('todo')
+
+
+st.dataframe(dp.df_migration)
