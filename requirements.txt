@@ -1,5 +1,6 @@
 #data visualization
 streamlit
+altair
 
 #data handling
 pandas
