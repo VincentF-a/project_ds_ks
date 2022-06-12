@@ -21,3 +21,10 @@ if st.sidebar.button('Visualize the results'):
 
 
 st.dataframe(dp.df_migration)
+
+df_cities = pd.read_csv('data/cities.csv')
+
+st.map(df_cities)
+
+df_migration_test = dp.formatting_df_years(dp.df_migration_net, 1970, 1998)
+st.dataframe(df_migration_test)
