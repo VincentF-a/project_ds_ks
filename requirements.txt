@@ -1,6 +1,7 @@
 #data visualization
 streamlit
 altair
+streamlit-aggrid
 
 #data handling
 pandas
