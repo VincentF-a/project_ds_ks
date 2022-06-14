@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import re
+import numpy as np
 
 from process.data_process import retrieve_cities, retrieve_years
 from content import display
+from process.data_retrieve import df_positions
 
 # Streamlit states
 
@@ -27,3 +29,10 @@ if st.sidebar.button('Visualize the migrations') or st.session_state['past_migra
     st.session_state['past_migrations'] = True
     display(list_cities, start_year, end_year)
 
+if st.button('Show map of Korea'):
+    st.map(df_positions)
+
+
+DATA_URL = "https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv"
+df = pd.read_csv(DATA_URL)
+st.dataframe(df)
