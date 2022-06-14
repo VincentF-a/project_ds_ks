@@ -31,8 +31,3 @@ if st.sidebar.button('Visualize the migrations') or st.session_state['past_migra
 
 if st.button('Show map of Korea'):
     st.map(df_positions)
-
-
-DATA_URL = "https://raw.githubusercontent.com/ajduberstein/geo_datasets/master/housing.csv"
-df = pd.read_csv(DATA_URL)
-st.dataframe(df)

@@ -42,7 +42,7 @@ def formatting_df_years(df_migration: pd.DataFrame, year_start: int, year_end: i
     df_migration = df_migration[df_migration['By district to move-in'].isin(list_cities)]
     return df_migration
 
-def remove_neg_from_col(df: pd.DataFrame) -> pd.DataFrame:
+def assign_neg_from_col(df: pd.DataFrame) -> pd.DataFrame:
     df = df[df[df.columns[0]]!=0]
     df['positive'] = df[df.columns[0]].apply(return_pos_neg)
     df = df.apply(abs)
