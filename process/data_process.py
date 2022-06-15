@@ -6,6 +6,8 @@ from process.data_retrieve import df_migration
 
 from zmq import device
 
+import streamlit as st
+
 def pre_processing(df_migration: pd.DataFrame) -> pd.DataFrame:
     df_migration_net = df_migration[df_migration['Item']=="Net migrants[Person]"]
     return df_migration_net
@@ -50,3 +52,23 @@ def assign_neg_from_col(df: pd.DataFrame) -> pd.DataFrame:
 
 def return_pos_neg(value: int) -> bool:
     return value > 0
+
+def formatting_predictions(df: pd.DataFrame) -> pd.DataFrame:
+    col_cities = [city for city in df.columns if "predicted" in city]
+    return df.pivot_table(columns='Date', values=col_cities).rename_axis('city').reset_index()
+
+def concat_years_pred(df: pd.DataFrame) -> pd.DataFrame:
+    list_years =[year_col[:4] for year_col in list(df) if 'city' not in year_col]
+    for year in list_years:
+        if year == '2020':
+            list_months = ['2020-11-01', '2020-12-01']
+        else:    
+            list_months = [f"{year}-0{i+1}-01" for i in range(9)] + [f'{year}-10-01', f'{year}-11-01', f'{year}-12-01']
+            if year == '2070':
+                list_months.pop()
+        df[year] = df[list_months].sum(axis=1)
+    
+    list_cols_keep = [col for col in list(df) if "-" not in col]
+    df['city'] = df['city'].map(lambda x: x.rstrip('_predicted'))
+    return df[list_cols_keep]
+    #return df[[cols_keep]]

@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
 import re
-import numpy as np
 
 from process.data_process import retrieve_cities, retrieve_years
-from content import display
+from content import display_analyze
 from process.data_retrieve import df_positions
 
 # Streamlit states
@@ -15,7 +14,9 @@ if 'past_migrations' not in st.session_state:
 st.sidebar.title('Welcome to our project')
 
 st.sidebar.markdown('This project is aimed at displaying the **demographic evolution** inside South Korea and predict its future evolutions.')
-list_cities = st.sidebar.multiselect('Select the cities and provinces',retrieve_cities(),default=retrieve_cities())
+list_cities = retrieve_cities()
+
+module_choice = st.sidebar.radio("Please choose the module", ['Analyze', 'Compare'])
 
 start_year_col, end_year_col = st.sidebar.columns(2)
 list_years = retrieve_years()
@@ -27,7 +28,4 @@ with end_year_col:
 
 if st.sidebar.button('Visualize the migrations') or st.session_state['past_migrations']:
     st.session_state['past_migrations'] = True
-    display(list_cities, start_year, end_year)
-
-if st.button('Show map of Korea'):
-    st.map(df_positions)
+    display_analyze(list_cities, start_year, end_year)
