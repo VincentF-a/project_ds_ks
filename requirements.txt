@@ -1,6 +1,5 @@
 #data visualization
 streamlit
-altair
 streamlit-aggrid
 pydeck
 

@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import re
 
 from process.data_process import retrieve_cities, retrieve_years
