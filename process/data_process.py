@@ -9,22 +9,40 @@ from zmq import device
 import streamlit as st
 
 def pre_processing(df_migration: pd.DataFrame) -> pd.DataFrame:
+    """
+    We only keep the net migrants rows
+    """
     df_migration_net = df_migration[df_migration['Item']=="Net migrants[Person]"]
     return df_migration_net
 
 def retrieve_cities(df_migration: pd.DataFrame = df_migration) -> list:
+    """
+    From the df_migration, we retrieve the list of the cities/provinces
+    """
     list_cities_out = df_migration['By district to move-out'].unique()
     list_cities_in = df_migration['By district to move-in'].unique()
     list_cities = [city for city in list_cities_out if city in list_cities_in]
     return list_cities
 
 def retrieve_years(df_migration: pd.DataFrame = df_migration) -> list:
+    """
+    retrieve the list of years from df_migration
+    """
     raw_list_quarters = df_migration.columns.values.tolist()
     list_quarters = [quarter for quarter in raw_list_quarters if re.match(r'[1-2][0-9][0-9][0-9]',quarter)]
     list_years = list(set([int(quarter[:4]) for quarter in list_quarters]))
     return list_years
 
-def formatting_df_years(df_migration: pd.DataFrame, year_start: int, year_end: int, list_cities:list) -> pd.DataFrame:
+def formatting_df_years(
+    df_migration: pd.DataFrame, 
+    year_start: int, 
+    year_end: int, 
+    list_cities:list) -> pd.DataFrame:
+    """
+    Concatenate the values for every quarter to a single year column, 
+    then removes the quarter column
+    nb: if the year is 2022, only 2 quarters, so we create a specific case for it
+    """
     df_migration = df_migration.fillna(0)
     list_years = [*range(year_start, year_end+1, 1)]
     list_cols_index = ['By district to move-out', 'By district to move-in', 'Item', 'UNIT']
@@ -45,6 +63,9 @@ def formatting_df_years(df_migration: pd.DataFrame, year_start: int, year_end: i
     return df_migration
 
 def assign_neg_from_col(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    create a column to differentiate the positive number of arrivals and negative
+    """
     df = df[df[df.columns[0]]!=0]
     df['positive'] = df[df.columns[0]].apply(return_pos_neg)
     df = df.apply(abs)
@@ -58,6 +79,9 @@ def formatting_predictions(df: pd.DataFrame) -> pd.DataFrame:
     return df.pivot_table(columns='Date', values=col_cities).rename_axis('city').reset_index()
 
 def concat_years_pred(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create a new dataframe that has the month columns concatenated
+    """
     list_years =[year_col[:4] for year_col in list(df) if 'city' not in year_col]
     for year in list_years:
         if year == '2020':
@@ -71,4 +95,3 @@ def concat_years_pred(df: pd.DataFrame) -> pd.DataFrame:
     list_cols_keep = [col for col in list(df) if "-" not in col]
     df['city'] = df['city'].map(lambda x: x.rstrip('_predicted'))
     return df[list_cols_keep]
-    #return df[[cols_keep]]

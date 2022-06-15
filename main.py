@@ -6,12 +6,14 @@ from content import display_analyze, display_compare
 from process.data_retrieve import df_positions
 
 # Streamlit states
+# This part is in order to keep the content of the webapp when the user interacts with the content
 
 if 'viz' not in st.session_state:
     st.session_state['viz'] = False
 
 if 'past_migrations' not in st.session_state:
     st.session_state['past_migrations'] = False
+
 
 st.sidebar.title('Welcome to our project')
 
