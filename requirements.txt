@@ -1,5 +1,8 @@
 #data visualization
 streamlit
+altair
+streamlit-aggrid
+pydeck
 
 #data handling
 pandas

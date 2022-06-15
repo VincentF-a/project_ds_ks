@@ -2,21 +2,36 @@ import streamlit as st
 import pandas as pd
 import re
 
-from data_process import data_process as dp
+from process.data_process import retrieve_cities, retrieve_years
+from content import display_analyze, display_compare
+from process.data_retrieve import df_positions
+
+# Streamlit states
+
+if 'viz' not in st.session_state:
+    st.session_state['viz'] = False
+
+if 'past_migrations' not in st.session_state:
+    st.session_state['past_migrations'] = False
 
 st.sidebar.title('Welcome to our project')
 
 st.sidebar.markdown('This project is aimed at displaying the **demographic evolution** inside South Korea and predict its future evolutions.')
-st.sidebar.multiselect('Select the cities',dp.list_cities)
+list_cities = retrieve_cities()
 
-st.sidebar.slider('Select a time frame', min_value=dp.list_quarters[0], max_value=dp.list_quarters[-1], value=dp.list_quarters)
+module_choice = st.sidebar.radio("Please choose the module", ['Analyze', 'Compare'])
 
-st.dataframe(dp.df_migration)
-st.markdown(dp.df_migration.shape)
+start_year_col, end_year_col = st.sidebar.columns(2)
+list_years = retrieve_years()
+with start_year_col:
+    start_year = st.selectbox('Select the start year', options=list_years)
+with end_year_col:
+    updated_years = list_years[list_years.index(start_year):]
+    end_year = st.selectbox('Select the end year', options=updated_years, index=len(updated_years)-1)
 
-st.markdown(dp.list_cities_in)
-st.markdown(dp.list_cities_out)
-st.markdown(dp.list_cities)
-
-st.markdown(dp.raw_list_quarters)
-st.markdown(dp.list_quarters)
+if st.sidebar.button('Visualize the migrations') or st.session_state['viz']:
+    st.session_state['viz'] = True
+    if module_choice == 'Analyze':
+        display_analyze(list_cities, start_year, end_year)
+    else:
+        display_compare(list_cities, start_year, end_year)
