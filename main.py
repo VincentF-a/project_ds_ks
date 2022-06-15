@@ -3,10 +3,13 @@ import pandas as pd
 import re
 
 from process.data_process import retrieve_cities, retrieve_years
-from content import display_analyze
+from content import display_analyze, display_compare
 from process.data_retrieve import df_positions
 
 # Streamlit states
+
+if 'viz' not in st.session_state:
+    st.session_state['viz'] = False
 
 if 'past_migrations' not in st.session_state:
     st.session_state['past_migrations'] = False
@@ -26,6 +29,9 @@ with end_year_col:
     updated_years = list_years[list_years.index(start_year):]
     end_year = st.selectbox('Select the end year', options=updated_years, index=len(updated_years)-1)
 
-if st.sidebar.button('Visualize the migrations') or st.session_state['past_migrations']:
-    st.session_state['past_migrations'] = True
-    display_analyze(list_cities, start_year, end_year)
+if st.sidebar.button('Visualize the migrations') or st.session_state['viz']:
+    st.session_state['viz'] = True
+    if module_choice == 'Analyze':
+        display_analyze(list_cities, start_year, end_year)
+    else:
+        display_compare(list_cities, start_year, end_year)

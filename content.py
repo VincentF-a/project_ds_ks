@@ -7,17 +7,17 @@ from process import data_retrieve as dr
 from process import data_process as dp
 from process.data_visualization import plot_korea_viz
 
-def display_analyze(list_cities: list, year_start: int, year_end: int):
+def display_analyze(list_cities: list, year_start: int, year_end: int, key:str="key"):
     df_migration = dp.pre_processing(dr.df_migration)
     df_migration = dp.formatting_df_years(df_migration,year_start, year_end, list_cities)
     
-    data_choice = st.selectbox('Please select the data type', ['Past data', 'Prediction data'])
+    data_choice = st.selectbox('Please select the data type', ['Past data', 'Prediction data'],key=key)
 
     df_positions = dr.df_positions
 
     if data_choice == "Past data":
 
-        year_selected = st.slider('Please select a year', year_start, year_end, step=1)
+        year_selected = st.slider('Please select a year', year_start, year_end, step=1,key=key)
 
         df_migration_filtered = df_migration[
             (df_migration[
@@ -39,7 +39,7 @@ def display_analyze(list_cities: list, year_start: int, year_end: int):
 
         st.pydeck_chart(plot_korea_viz(df_migration_to_plot))
 
-        if st.button('Verify the data'):
+        if st.button('Verify the data',key=key):
             AgGrid(df_migration_filtered[['name', str(year_selected)]])
     
     else:
@@ -56,5 +56,14 @@ def display_analyze(list_cities: list, year_start: int, year_end: int):
 
         st.pydeck_chart(plot_korea_viz(df_migration_to_plot))
 
-        if st.button('Verify the data'):
+        if st.button('Verify the data',key=key):
             AgGrid(df_migration[['city', str(year_selected)]])
+
+def display_compare(list_cities: list, year_start: int, year_end: int):
+    column1, column2 = st.columns(2)
+
+    with column1:
+        display_analyze(list_cities, year_start, year_end, "column1")
+
+    with column2:
+        display_analyze(list_cities, year_start, year_end, "column2")
